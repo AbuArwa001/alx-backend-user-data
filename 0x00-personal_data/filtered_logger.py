@@ -4,6 +4,7 @@ Filter logs
 """
 import re
 
+
 def filter_datum(fields, redaction, message, separator):
     """filter_datum that returns the log message obfuscated:"""
     for field in fields:
