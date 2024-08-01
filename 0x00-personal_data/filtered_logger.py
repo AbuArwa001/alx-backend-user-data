@@ -18,17 +18,16 @@ def filter_dec(func: Callable) -> Callable:
             replacements = [f"{match.group(i)}={redaction}"
                             for i in range(1, len(match.groups()) + 1)]
             return separator.join(replacements)
-
         # Build the regex pattern dynamically
-        regex_parts = []
+        parts = ""
+        fin_str = message
         for field in fields:
             if field == "date_of_birth":
-                regex_parts.append(f"({field})=\\d{{2}}/\\d{{2}}/\\d{{4}}")
+                parts = f"({field})=\\d{{2}}/\\d{{2}}/\\d{{4}}"
             else:
-                regex_parts.append(f"({field})=[^;]+")
-        regex = separator.join(regex_parts)
-
-        return re.sub(regex, replace_values, message)
+                parts = f"({field})=[^;]+"
+            fin_str = re.sub(parts, replace_values, fin_str)
+        return fin_str
 
     return wrapper
 
