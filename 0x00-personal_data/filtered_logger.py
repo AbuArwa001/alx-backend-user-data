@@ -7,8 +7,14 @@ from typing import Callable
 
 
 def filter_dec(func: Callable) -> Callable:
+    """
+    Filter decorator
+    """
     def wrapper(fields, redaction, message, separator):
         def replace_values(match):
+            """
+            Replace values
+            """
             replacements = [f"{match.group(i)}={redaction}"
                             for i in range(1, len(match.groups()) + 1)]
             return separator.join(replacements)
