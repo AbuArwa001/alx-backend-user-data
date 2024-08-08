@@ -6,6 +6,7 @@ from api.v1.views import app_views
 from models.user import User
 from os import getenv
 
+
 @app_views.route('/auth_session/login', methods=['POST'], strict_slashes=False)
 def login() -> str:
     """ POST /auth_session/login
@@ -14,11 +15,14 @@ def login() -> str:
     """
     email = request.form.get('email')
     if not email:
-        return jsonify({ "error": "email missing" }), 400
+        return jsonify({"error": "email missing"}), 400
     password = request.form.get('password')
     if not password:
         return jsonify({"error": "password missing"}), 400
-    user = User.search({"email": email})[0]
+    try:
+        user = User.search({"email": email})[0]
+    except Exception:
+        return jsonify({"error": "no user found for this email"}), 404
     if user:
         if user.is_valid_password(password):
             from api.v1.app import auth
