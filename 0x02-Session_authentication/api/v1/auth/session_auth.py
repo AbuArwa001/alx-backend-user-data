@@ -12,3 +12,4 @@ class SessionAuth(Auth):
     """
     Child class for Auth
     """
+    pass
