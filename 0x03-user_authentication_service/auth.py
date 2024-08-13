@@ -54,7 +54,7 @@ class Auth:
             return True
         return False
 
-    def _generate_uuid() -> str:
+    def _generate_uuid(self) -> str:
         """
         The function should
         return a string representation of a new UUID.
