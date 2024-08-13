@@ -2,8 +2,11 @@
 """
 Simple flask APP
 """
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
+from auth import Auth
 
+
+AUTH = Auth()
 app = Flask(__name__)
 
 
@@ -13,6 +16,20 @@ def index():
     Index route
     """
     return jsonify({"message": "Bienvenue"})
+
+
+@app.route('/users', methods=['POST'])
+def users() -> str:
+    """
+    Add User route
+    """
+    email: str = request.form.get("email")
+    password: str = request.form.get("password")
+    try:
+        user = Auth.register_user(AUTH, email, password)
+    except ValueError as e:
+        return jsonify({"message": "email already registered"}), 400
+    return jsonify({"email": user.email, "message": "user created"})
 
 
 if __name__ == "__main__":
