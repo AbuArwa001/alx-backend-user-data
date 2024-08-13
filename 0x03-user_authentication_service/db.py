@@ -44,7 +44,7 @@ class DB:
         # print(new_user.email)
         return new_user
 
-    def find_user_by(self, **kwargs):
+    def find_user_by(self, **kwargs) -> User:
         """
         Find a User
         """
