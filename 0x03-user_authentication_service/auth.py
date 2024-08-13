@@ -5,7 +5,7 @@ Module Containing __hash_password method
 from db import DB
 from user import User
 from sqlalchemy.orm.exc import NoResultFound
-from bcrypt import hashpw, gensalt
+from bcrypt import hashpw, gensalt, checkpw
 
 
 def _hash_password(password: str) -> bytes:
@@ -37,3 +37,18 @@ class Auth:
             hashed_pwd = _hash_password(password)
             user = self._db.add_user(email, hashed_pwd)
         return user
+
+    def valid_login(self, email: str, password: str) -> bool:
+        """
+        It should expect email and
+        password required arguments and return a boolean.
+        """
+        try:
+            user = self._db.find_user_by(email=email)
+        except NoResultFound:
+            return False
+        hashed = password.encode('utf-8')
+        # hashed = _hash_password(password)
+        if checkpw(hashed, user.hashed_password):
+            return True
+        return False
