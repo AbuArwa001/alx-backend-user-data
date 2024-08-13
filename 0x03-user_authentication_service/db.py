@@ -11,7 +11,6 @@ from typing import TypeVar
 from user import User
 
 from user import Base
-next_user = TypeVar('User')
 
 
 class DB:
@@ -35,7 +34,7 @@ class DB:
             self.__session = DBSession()
         return self.__session
 
-    def add_user(self, email: str, hashed_password: str) -> next_user:
+    def add_user(self, email: str, hashed_password: str) -> User:
         """Add A User
         """
         new_user = User(email=email, hashed_password=hashed_password)
