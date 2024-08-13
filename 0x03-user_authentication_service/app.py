@@ -7,7 +7,7 @@ from flask import Flask, jsonify
 app = Flask(__name__)
 
 
-@app.route('/', options=['GET'])
+@app.route('/', methods=['GET'])
 def index():
     """
     Index route
