@@ -2,13 +2,15 @@
 """
 Simple flask APP
 """
-from flask import (Flask,
-                   jsonify,
-                   request,
-                   abort,
-                   redirect,
-                   url_for,
-                   make_response)
+from flask import (
+    Flask,
+    jsonify,
+    request,
+    abort,
+    redirect,
+    url_for,
+    make_response,
+)
 from auth import Auth
 
 
@@ -16,7 +18,7 @@ AUTH = Auth()
 app = Flask(__name__)
 
 
-@app.route('/', methods=['GET'])
+@app.route("/", methods=["GET"])
 def index():
     """
     Index route
@@ -24,7 +26,7 @@ def index():
     return jsonify({"message": "Bienvenue"})
 
 
-@app.route('/users', methods=['POST'])
+@app.route("/users", methods=["POST"])
 def users() -> str:
     """
     Add User route
@@ -38,7 +40,7 @@ def users() -> str:
     return jsonify({"email": user.email, "message": "user created"})
 
 
-@app.route('/sessions', methods=['POST'])
+@app.route("/sessions", methods=["POST"])
 def login() -> str:
     """
     Login User route
@@ -51,25 +53,27 @@ def login() -> str:
     else:
         session_id = AUTH.create_session(email)
         resp = make_response({"email": email, "message": "logged in"})
-        resp.set_cookie('session_id', session_id)
+        resp.set_cookie("session_id", session_id)
         return resp
 
 
-@app.route('/sessions', methods=['DELETE'])
+@app.route("/sessions", methods=["DELETE"])
 def logout() -> str:
     """
     Logout User route
     """
-    session_id: str = request.form.get("session_id")
+    session_id: str = request.form.get("session_id") or request.cookies.get(
+        "session_id"
+    )
     user = Auth.get_user_from_session_id(AUTH, session_id)
-    if not user:
+    if user is None:
         abort(403)
     else:
         AUTH.destroy_session(user.id)
-        return redirect(url_for('index'))
+        return redirect(url_for("index"))
 
 
-@app.route('/profile', methods=['GET'])
+@app.route("/profile", methods=["GET"])
 def profile():
     """
     function to respond to the GET /profile route.
@@ -83,13 +87,13 @@ def profile():
         abort(403)
 
 
-@app.route('/reset_password', methods=['POST'])
+@app.route("/reset_password", methods=["POST"])
 def get_reset_password_token() -> str:
     """
     function to respond to the POST
     /reset_password route
     """
-    email = request.form.get('email')
+    email = request.form.get("email")
     try:
         token = AUTH.get_reset_password_token(email)
     except ValueError:
@@ -97,7 +101,7 @@ def get_reset_password_token() -> str:
     return jsonify({"email": email, "reset_token": token}), 200
 
 
-@app.route('/reset_password', methods=['PUT'])
+@app.route("/reset_password", methods=["PUT"])
 def update_password() -> str:
     """
     function in the app module to respond to
