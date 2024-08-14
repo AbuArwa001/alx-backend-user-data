@@ -5,6 +5,7 @@ Module Containing __hash_password method
 from db import DB
 from user import User
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.exc import InvalidRequestError
 from bcrypt import hashpw, gensalt, checkpw
 from uuid import uuid4
 from typing import Union
@@ -101,13 +102,15 @@ class Auth:
         It takes an
         email string argument and returns a string.
         """
-        user = self._db.find_user_by(email=email)
-        if not user:
+        try:
+            user = self._db.find_user_by(email=email)
+        except NoResultFound:
             raise ValueError()
-        else:
-            reset_token = _generate_uuid()
-            self._db.update_user(user.id, reset_token=reset_token)
-            return reset_token
+        except InvalidRequestError:
+            raise ValueError()
+        reset_token = _generate_uuid()
+        self._db.update_user(user.id, reset_token=reset_token)
+        return reset_token
 
     def update_password(self, reset_token: str, password: str) -> None:
         """
