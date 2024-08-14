@@ -63,6 +63,8 @@ def logout() -> str:
     Logout User route
     """
     session_id: str = request.cookies.get("session_id")
+    if not session_id:
+        abort(403)
     user = Auth.get_user_from_session_id(AUTH, session_id)
     if user is None:
         abort(403)
