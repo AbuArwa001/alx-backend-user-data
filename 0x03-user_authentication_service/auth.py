@@ -15,7 +15,7 @@ def _hash_password(password: str) -> bytes:
     """
     Method that hashes password
     """
-    bytes = password.encode('utf-8')
+    bytes = password.encode("utf-8")
     salt = gensalt()
     return hashpw(bytes, salt)
 
@@ -29,8 +29,7 @@ def _generate_uuid() -> str:
 
 
 class Auth:
-    """Auth class to interact with the authentication database.
-    """
+    """Auth class to interact with the authentication database."""
 
     def __init__(self):
         self._db = DB()
@@ -58,7 +57,7 @@ class Auth:
             user = self._db.find_user_by(email=email)
         except NoResultFound:
             return False
-        hashed = password.encode('utf-8')
+        hashed = password.encode("utf-8")
         # hashed = _hash_password(password)
         if checkpw(hashed, user.hashed_password):
             return True
@@ -119,11 +118,9 @@ class Auth:
         """
         try:
             user = self._db.find_user_by(reset_token=reset_token)
-        except NoResultFound:
+        except (NoResultFound, InvalidRequestError):
             raise ValueError()
         hashed_pwd = _hash_password(password)
-        data = {
-                "hashed_password": hashed_pwd,
-                "reset_token": None
-                }
-        self._db.update_user(user.id, data)
+        self._db.update_user(
+            user.id, hashed_password=hashed_pwd, reset_token=None
+        )
