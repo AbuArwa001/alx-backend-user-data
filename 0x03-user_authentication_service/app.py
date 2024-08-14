@@ -72,7 +72,7 @@ def logout() -> str:
 
 
 @app.route("/profile", methods=["GET"])
-def profile():
+def profile() -> str:
     """
     function to respond to the GET /profile route.
     The request is expected to contain a session_id cookie
